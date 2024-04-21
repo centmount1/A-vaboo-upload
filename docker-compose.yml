@@ -1,0 +1,78 @@
+version: '3.8'
+networks:
+  my_network:
+
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ./:/workspaces/A-vaboo-upload:cached
+    command: |
+      sh -c " 
+        python /workspaces/A-vaboo-upload/backend/whisper_req.py & 
+        python /workspaces/A-vaboo-upload/backend/flask/whisper_api_request.py & 
+        python /workspaces/A-vaboo-upload/backend/folder_watch/watch_ts_req.py"
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=whisper
+    ports:
+      - "5001:5001"
+    networks:
+      - my_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    volumes:
+      - ./frontend:/app
+    command: sh -c "npm install && npm run serve"
+    ports:
+      - "8080:8080" 
+    networks:
+      - my_network
+
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: whisper
+      POSTGRES_PASSWORD: postgres    
+      TZ: Asia/Tokyo
+    networks:
+      - my_network
+  
+  # pgweb:
+  #   image: sosedoff/pgweb
+  #   container_name: "pgweb"
+  #   ports:
+  #     - "8081:8081"
+  #   depends_on:
+  #     - db
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    volumes:
+      - ./backend/remote_dir:/app
+    ports:
+      - "6001:6001"
+    depends_on:
+      - app
+    networks:
+      - my_network
+
+volumes:
+  postgres-data:
