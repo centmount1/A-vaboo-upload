@@ -1,50 +1,48 @@
-# ディレクトリ＆ファイル作成が必要
-- ログ保存ファイル<br> 
-./backend/log/request_api.log<br>
-./backend/log/ts_smb_watcher.log<br>
-./backend/log/whisper_req_ope.log<br>
-- 動画ファイルアップロード先ディレクトリ<br> 
-./backend/remote_dir<br>
-- 動画ファイル処理用の一時ディレクトリ<br> 
-./backend/tmp_req<br>
+# A-vabooファイルアップロード版
+- ファイルアップロードの動作確認用に作成
+- 元の処理をほぼ書き換えず、そのまま残しています。
+- フロントエンドからのAPIアクセス、DBのタイムコード処理など
+最適化できていません。
 
-# 環境変数の設定
-.env.sampleファイルのAPI等を書き換え
+## 起動方法
 
-# ①frontend/*
+### リポジトリのクローン
+- `git clone git@github.com:centmount1/A-vaboo-upload.git`
+
+### 環境変数の設定
+- `.env.sample`ファイルをコピーして、`.env`ファイルを作成
+- メール送信用に`GMAIL_PASSWORD`の入力 
+- 日本語翻訳用に`OPENAI_API_KEY`の入力
+
+### Dockerコンテナの起動
+- `cd A-vaboo-upload`でdocker-compose.ymlのディレクトリに移動
+- `docker compose build --no-cache`でイメージ作成
+- `docker compose up`でコンテナ起動
+- app（バックエンド）、frontend, db, nginxが起動されます。
+- ブラウザで`http://localhost:8080`で動作確認
+
+## 主なファイルの構成
+
+### ①frontend/*
 フロントアプリ(vue)
 
-# ②backend/flask/whisper_api_request.py
-API(flask)
-<br>
-ー映像ファイルをアップロードAPI<br>
-ーPostgreSQL(request_operation_listテーブル)登録API<br>
-ー映像ファイルが存在するかチェックAPI<br>
-ー結果送信先のメールアドレス追加API<br>
-ー処理中のファイルの残時間取得API<br>
+### ②backend/flask/whisper_api_request.py
+- API(flask)
+- 映像ファイルをアップロードAPI<br>
+- `PostgreSQL`(request_operation_listテーブル)登録API<br>
+- 映像ファイルが存在するかチェックAPI<br>
+- 結果送信先のメールアドレス追加API<br>
+- 処理中のファイルの残時間取得API<br>
 
-# ③backend/folder_watch/watch_ts_req.py
-バックエンド常時起動アプリ１<br>
-ーDB登録されたファイルをDL・DB更新<br>
+### ③backend/folder_watch/watch_ts_req.py
+- バックエンド常時起動アプリ１<br>
+- DB登録されたファイルをDL・DB更新<br>
 
-# ④backend/whisper_req.py
-バックエンド常時起動アプリ２<br>
-ーfaster-whisperにより文字起こし<br>
-ー文字起こし結果と各タイムコードをrequest_operation_listテーブルのIDと紐づいた、
-　request_transcriptionsテーブルに登録<br>
-ー各文字起こし結果はMeCabで形態素解析し、文末表現まで文字起こし結果をつなげる<br>
-ーja以外はChatGPTのAPIで翻訳結果を付与<br>
+### ④backend/whisper_req.py
+- バックエンド常時起動アプリ２<br>
+- `faster-whisper`により文字起こし<br>
+- 文字起こし結果と各タイムコードを`request_operation_list`テーブルのIDと紐づいた、
+　`request_transcriptions`テーブルに登録<br>
+- 各文字起こし結果は`MeCab`で形態素解析し、文末表現まで文字起こし結果をつなげる<br>
+- `ja`以外は`ChatGPTのAPI`で翻訳結果を付与<br>
 
-# ◯その他メモ<br>
-ーモデルは↓から自動更新でDLしようとする。model_pathにこのモデルのパスを指定するとローカルで完結。<br>
- https://huggingface.co/guillaumekln<br>
-
-ーlarge-v3使うには：↑はv2までしかない。パスを↓に変えるもしくはローカルにモデルDLでv3使用可能<br>
-https://github.com/SYSTRAN/faster-whisper<br>
-
-# ファイル版参考サイト<br>
-https://github.com/PINTO0309/faster-whisper-env<br>
-https://github.com/guillaumekln/faster-whisper<br>
-
-# リアルタイム版参考サイト<br>
-https://qiita.com/reriiasu/items/dccffb249a41959c839e
