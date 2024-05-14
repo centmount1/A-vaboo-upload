@@ -11,7 +11,7 @@
 
 ### 環境変数の設定
 - `.env.sample`ファイルをコピーして、`.env`ファイルを作成
-- メール送信用に`GMAIL_PASSWORD`の入力 
+- メール送信用に`GMAIL_ACCOUNT`、`GMAIL_PASSWORD`の入力 
 - 日本語翻訳用に`OPENAI_API_KEY`の入力
 
 ### Dockerコンテナの起動

@@ -24,6 +24,8 @@ logging.basicConfig(
 # envファイルの読み込み
 load_dotenv()
 OPEN_API_KEY = os.getenv("OPENAI_API_KEY")
+GMAIL_ACCOUNT = os.getenv("GMAIL_ACCOUNT")
+GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")
 
 # OpenAI APIクライアントの初期化
 client = OpenAI()
@@ -159,8 +161,8 @@ def insert_and_commit(record, segments, start_tc_seconds):
 
 
 def sendmail(subject, body, mail_to):
-    gmail_account = "nakayamas@ex5ch.com"
-    gmail_password = os.getenv("GMAIL_PASSWORD")  # 環境変数からパスワードを取得
+    gmail_account = GMAIL_ACCOUNT 
+    gmail_password = GMAIL_PASSWORD
 
     msg = MIMEMultipart()
     msg["Subject"] = subject
