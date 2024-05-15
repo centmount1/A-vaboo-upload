@@ -14,8 +14,10 @@
 - メール送信用に`GMAIL_ACCOUNT`、`GMAIL_PASSWORD`の入力 
 - 日本語翻訳用に`OPENAI_API_KEY`の入力
 
+### ファイル保存ディレクトリとログ用ファイルの作成
+- `source start.sh`を実行
+
 ### Dockerコンテナの起動
-- `cd A-vaboo-upload`でdocker-compose.ymlのディレクトリに移動
 - `docker compose build --no-cache`でイメージ作成
 - `docker compose up`でコンテナ起動
 - app（バックエンド）、frontend, db, nginxが起動されます。

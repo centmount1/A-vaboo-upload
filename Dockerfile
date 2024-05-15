@@ -24,12 +24,3 @@ RUN pip3 --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requ
 
 # Set the working directory
 WORKDIR /workspaces/${localWorkspaceFolderBasename}
-
-# Copy start.sh script into the image
-COPY start.sh /workspaces/A-vaboo-upload/start.sh
-
-# Give execute permission to the start.sh script
-RUN chmod +x /workspaces/A-vaboo-upload/start.sh
-
-# Execute start.sh and then run Python scripts
-CMD ["/bin/bash", "-c", "/workspaces/A-vaboo-upload/start.sh"]
